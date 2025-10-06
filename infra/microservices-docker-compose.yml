@@ -1,0 +1,38 @@
+services:
+  # Auth and User Management Service
+  authentication:
+    build:
+      context: ../microservices/authentication
+    container_name: authentication_service
+    restart: always
+    volumes:
+      - ../microservices/authentication:/app
+    ports:
+      - "8001:8000"
+    depends_on:
+      - db
+    env_file:
+      - ./.env.dev
+  # Grid management Service
+  grid:
+    build:
+      context: ../microservices/grid
+    container_name: grid_service
+    restart: always
+    volumes:
+      - ../microservices/grid:/app
+    ports:
+      - "8002:8000"
+    depends_on:
+      - db
+    env_file:
+      - ./.env.dev
+  db:
+    image: postgres:14.0-alpine
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env.dev
+volumes:
+  postgres_data:
